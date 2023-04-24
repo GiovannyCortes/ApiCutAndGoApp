@@ -1,12 +1,12 @@
 ﻿using ApiCutAndGoApp.Data;
 using ApiCutAndGoApp.Models;
 using CutAndGo.Helpers;
-using CutAndGo.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
+using static CutAndGo.Interfaces.IRepositoryHairdresser;
 
 namespace ApiCutAndGoApp.Repositores {
-    public class RepositoryHairdresser : IRepositoryHairdresser {
+    public class RepositoryHairdresser {
 
         HairdressersContext context;
 
