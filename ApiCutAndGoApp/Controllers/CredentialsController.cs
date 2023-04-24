@@ -1,5 +1,5 @@
 ﻿using ApiCutAndGoApp.Repositores;
-using CutAndGo.Models;
+using ApiCutAndGoApp.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiCutAndGoApp.Controllers {
