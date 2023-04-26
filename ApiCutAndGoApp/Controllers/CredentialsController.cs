@@ -1,4 +1,4 @@
-﻿using ApiCutAndGoApp.Repositores;
+﻿using CutAndGo.Interfaces;
 using CutAndGo.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,9 +7,9 @@ namespace ApiCutAndGoApp.Controllers {
     [ApiController]
     public class CredentialsController : ControllerBase {
 
-        private RepositoryHairdresser repo;
+        private IRepositoryHairdresser repo;
 
-        public CredentialsController(RepositoryHairdresser repo) {
+        public CredentialsController(IRepositoryHairdresser repo) {
             this.repo = repo;
         }
 

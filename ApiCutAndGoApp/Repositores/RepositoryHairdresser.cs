@@ -5,6 +5,8 @@ using CutAndGo.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 using static CutAndGo.Interfaces.IRepositoryHairdresser;
+using System.Numerics;
+using System.Xml.Linq;
 
 namespace ApiCutAndGoApp.Repositores {
     public class RepositoryHairdresser : IRepositoryHairdresser {
@@ -139,7 +141,7 @@ namespace ApiCutAndGoApp.Repositores {
             return await this.context.Admins.AnyAsync(a => a.UserId == user_id);
         }
 
-        public async Task<bool> EmailExistAscync(string email) {
+        public async Task<bool> EmailExistAsync(string email) {
             return await this.context.Users.AnyAsync(a => a.Email == email);
         }
 
@@ -184,6 +186,44 @@ namespace ApiCutAndGoApp.Repositores {
                                       ResponseCode = (int)ResponseCodes.Failed, 
                                       ErrorCode = (int)ResponseErrorCodes.RecordNotFound, 
                                       ErrorMessage = "Usuario no encontrado" 
+                                  };
+        }
+
+        public async Task<bool> DropUserRelationsAsync(int user_id) {
+            var query_Hairdressers = from hairdresser in this.context.Hairdressers
+                                     join admin in this.context.Admins on hairdresser.HairdresserId equals admin.HairdresserId
+                                     join user in this.context.Users on admin.UserId equals user.UserId
+                                     where user.UserId == user_id
+                                     select hairdresser.HairdresserId;
+
+            List<int> hairdresser_ids = await query_Hairdressers.ToListAsync();
+            Response response = null;
+            foreach (int ids in hairdresser_ids) {
+                await this.DeleteAdminAsync(ids, user_id, user_id);
+                response = await this.DeleteHairdresserAsync(ids);
+            }
+            return (response != null && response.ResponseCode == (int)ResponseCodes.OK);
+        }
+
+        public async Task<Response> DeleteUserAsync(int user_id) {
+            User? user = await this.FindUserAsync(user_id);
+            int record = 0;
+            if (user != null) {
+                bool deleteRelations = true;
+                if (await this.UserIsAdminAsync(user_id)) { // El usuario es administrador
+                    deleteRelations = await this.DropUserRelationsAsync(user_id);
+                }
+
+                if (deleteRelations) {
+                    this.context.Users.Remove(user);
+                    record = await this.context.SaveChangesAsync();
+                }
+            }
+            return (record > 0) ? new Response { ResponseCode = (int)ResponseCodes.OK } :
+                                  new Response {
+                                      ResponseCode = (int)ResponseCodes.Failed,
+                                      ErrorCode = (int)ResponseErrorCodes.RecordNotFound,
+                                      ErrorMessage = "Usuario no encontrado"
                                   };
         }
 
