@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ApiCutAndGoApp.Models;
+using CutAndGo.Models;
 
 namespace ApiCutAndGoApp.Data {
     public class HairdressersContext : DbContext {

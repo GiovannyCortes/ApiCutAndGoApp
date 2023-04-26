@@ -1,4 +1,4 @@
-﻿using ApiCutAndGoApp.Models;
+﻿using CutAndGo.Models;
 using ApiCutAndGoApp.Repositores;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,6 +11,12 @@ namespace ApiCutAndGoApp.Controllers {
 
         public UsersController(RepositoryHairdresser repo) {
             this.repo = repo;
+        }
+
+        [HttpGet] [Route("{userId}")]
+        public async Task<ActionResult> UserIsAdmin(int userId) {
+            bool response = await this.repo.UserIsAdminAsync(userId);
+            return Ok(response);
         }
 
         [HttpPost]
