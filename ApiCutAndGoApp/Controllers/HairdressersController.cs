@@ -49,7 +49,7 @@ namespace ApiCutAndGoApp.Controllers {
             return await this.repo.UpdateHairdresserAsync(hairdresser.HairdresserId, hairdresser.Name, hairdresser.Phone, hairdresser.Address, hairdresser.PostalCode);
         }
 
-        [HttpDelete] [Route("[action/{hairdresserId}]")]
+        [HttpDelete] [Route("[action]/{hairdresserId}")]
         public async Task<ActionResult<Response>> DeleteHairdresser(int hairdresserId) {
             return await this.repo.DeleteHairdresserAsync(hairdresserId);
         }
