@@ -36,19 +36,19 @@ namespace ApiCutAndGoApp.Controllers {
         }
 
         [HttpPut] [Route("[action]")]
-        public async Task<ActionResult> UpdateUser(User user) {
+        public async Task<ActionResult<Response>> UpdateUser(User user) {
             Response response = await this.repo.UpdateUserAsync(user.UserId, user.Name, user.LastName, user.Phone, user.Email);
             return Ok(response);
         }
 
         [HttpDelete] [Route("[action]/{userId}")]
-        public async Task<ActionResult> DeleteUser(int userId) {
+        public async Task<ActionResult<Response>> DeleteUser(int userId) {
             Response response = await this.repo.DeleteUserAsync(userId);
             return Ok(response);
         }
 
         [HttpPut] [Route("[action]")]
-        public async Task<ActionResult> ValidateEmail(int userId) {
+        public async Task<ActionResult<Response>> ValidateEmail(int userId) {
             Response response = await this.repo.ValidateEmailAsync(userId);
             return Ok(response);
         }

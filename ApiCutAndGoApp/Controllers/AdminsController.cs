@@ -34,19 +34,19 @@ namespace ApiCutAndGoApp.Controllers {
         }
 
         [HttpPost] [Route("[action]")] 
-        public async Task<ActionResult> InsertAdmin(Admin admin) {
+        public async Task<ActionResult<Response>> InsertAdmin(Admin admin) {
             Response response = await this.repo.InsertAdminAsync(admin.HairdresserId, admin.UserId, admin.Role);
             return Ok(response);
         }
         
         [HttpPut] [Route("[action]")] 
-        public async Task<ActionResult> UpdateAdmin(Admin admin) {
+        public async Task<ActionResult<Response>> UpdateAdmin(Admin admin) {
             Response response = await this.repo.UpdateAdminAsync(admin.HairdresserId, admin.UserId, admin.Role);
             return Ok(response);
         }
         
         [HttpDelete] [Route("[action]")] 
-        public async Task<ActionResult> DeleteAdmin(int hairdresserId, int userIdMe, int userIdOther) {
+        public async Task<ActionResult<Response>> DeleteAdmin(int hairdresserId, int userIdMe, int userIdOther) {
             Response response = await this.repo.DeleteAdminAsync(hairdresserId, userIdMe, userIdOther);
             return Ok(response);
         }
