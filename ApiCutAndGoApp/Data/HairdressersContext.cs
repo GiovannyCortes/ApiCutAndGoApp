@@ -5,7 +5,7 @@ namespace ApiCutAndGoApp.Data {
     public class HairdressersContext : DbContext {
 
         public HairdressersContext(DbContextOptions<HairdressersContext> options) : base(options) { }
-
+        
         public DbSet<User> Users { get; set; }
         public DbSet<Hairdresser> Hairdressers { get; set; }
         public DbSet<Schedule> Schedules { get; set; }
@@ -26,6 +26,6 @@ namespace ApiCutAndGoApp.Data {
                 .Property(s => s.Price)
                 .HasPrecision(5, 2);
         }
-
+        
     }
 }

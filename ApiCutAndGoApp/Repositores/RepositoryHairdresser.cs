@@ -1,12 +1,12 @@
 ﻿using ApiCutAndGoApp.Data;
 using ApiCutAndGoApp.Helpers;
-using CutAndGo.Models;
-using CutAndGo.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
-using static CutAndGo.Interfaces.IRepositoryHairdresser;
 using System.Numerics;
 using System.Xml.Linq;
+using CutAndGo.Models;
+using CutAndGo.Interfaces;
+using static CutAndGo.Interfaces.IRepositoryHairdresser;
 
 namespace ApiCutAndGoApp.Repositores {
     public class RepositoryHairdresser : IRepositoryHairdresser {
@@ -168,7 +168,7 @@ namespace ApiCutAndGoApp.Repositores {
 
             this.context.Users.Add(user);
             await this.context.SaveChangesAsync();
-            return user;
+            return await this.FindUserAsync(newid);
         }
 
         public async Task<Response> UpdateUserAsync(int user_id, string name, string lastname, string phone, string email) {
@@ -826,6 +826,6 @@ namespace ApiCutAndGoApp.Repositores {
                                   new Response { ResponseCode = (int)ResponseCodes.Failed, ErrorCode = (int)ResponseErrorCodes.GeneralError };
         }
         #endregion
-
+        
     }
 }
