@@ -122,7 +122,7 @@ namespace ApiCutAndGoApp.Controllers {
 
         #region EXTRA ACTIONS
         // GET: /api/admins/AdminExist/{hairdresserId}/{userId}
-        /// <summary>Se verifica la existencia de un Administrador en la tabla ADMINS con la PK indicada.</summary>
+        /// <summary>Se verifica la existencia de un ADMINISTRADOR en la tabla ADMINS con la PK indicada.</summary>
         /// <param name="hairdresserId">ID (GUID) de la peluquería (PK).</param>
         /// <param name="userId">ID (GUID) del usuario afectado (PK).</param>
         /// <response code="200">OK. Devuelve TRUE o FALSE.</response>      
@@ -135,7 +135,7 @@ namespace ApiCutAndGoApp.Controllers {
         }
 
         // GET: /api/admins/CompareAdminRole/{hairdresserId}/{userId}
-        /// <summary>Se verifica si el admin actual posee privilegios sobre el admin indicado por ID.</summary>
+        /// <summary>Se verifica si el ADMINISTRADOR actual posee privilegios sobre el admin indicado por ID.</summary>
         /// <param name="hairdresserId">ID (GUID) de la peluquería (PK).</param>
         /// <param name="userId">ID (GUID) del usuario afectado (PK).</param>
         /// <response code="200">OK. Devuelve TRUE o FALSE.</response>      

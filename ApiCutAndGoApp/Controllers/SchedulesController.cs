@@ -2,10 +2,12 @@
 using CutAndGo.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using NSwag.Annotations;
 
 namespace ApiCutAndGoApp.Controllers {
     [Route("api/[controller]")]
     [ApiController]
+    [OpenApiTag("SCHEDULES")]
     public class SchedulesController : ControllerBase {
         
         private IRepositoryHairdresser repo;
@@ -14,45 +16,122 @@ namespace ApiCutAndGoApp.Controllers {
             this.repo = repo;
         }
 
+        #region CRUD ACTIONS
+        // GET: /api/schedules/FindSchedule/{scheduleId}/{getRows}
+        /// <summary>Obtiene un HORARIO de la tabla SCHEDULES.</summary>
+        /// <param name="scheduleId">ID (GUID) del horario.</param>
+        /// <param name="getRows">Determina si se deben recuperar, a su vez, sus registros de horarios (Boolean).</param>
+        /// <response code="200">OK. Devuelve el objeto solicitado.</response>
+        /// <response code="401">Unauthorized. Cliente no autorizado.</response>
+        /// <response code="404">NotFound. No se ha encontrado el objeto solicitado.</response>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet] [Route("[action]/{scheduleId}/{getRows}")] [Authorize]
-        public async Task<ActionResult<Schedule?>> FindSchedule(int scheduleId, bool getRows) {
-            return await this.repo.FindScheduleAsync(scheduleId, getRows);
-        }
-        
-        [HttpGet] [Route("[action]/{hairdresserId}/{getRows}")] [Authorize]
-        public async Task<ActionResult<Schedule?>> FindActiveSchedule(int hairdresserId, bool getRows) {
-            return await this.repo.FindActiveScheduleAsync(hairdresserId, getRows);
+        public async Task<ActionResult<Schedule>> FindSchedule(int scheduleId, bool getRows) {
+            Schedule? schedule = await this.repo.FindScheduleAsync(scheduleId, getRows);
+            return (schedule != null) ? Ok(schedule) : NotFound();
         }
 
+        // GET: /api/schedules/FindActiveSchedule/{hairdresserId}/{getRows}
+        /// <summary>Obtiene el HORARIO activo de la tabla SCHEDULES.</summary>
+        /// <param name="hairdresserId">ID (GUID) de la peluquería.</param>
+        /// <param name="getRows">Determina si se deben recuperar, a su vez, sus registros de horarios (Boolean).</param>
+        /// <response code="200">OK. Devuelve el objeto solicitado.</response>
+        /// <response code="401">Unauthorized. Cliente no autorizado.</response>
+        /// <response code="404">NotFound. No se ha encontrado el objeto solicitado.</response>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpGet] [Route("[action]/{hairdresserId}/{getRows}")] [Authorize]
+        public async Task<ActionResult<Schedule>> FindActiveSchedule(int hairdresserId, bool getRows) {
+            Schedule? schedule = await this.repo.FindActiveScheduleAsync(hairdresserId, getRows);
+            return (schedule != null) ? Ok(schedule) : NotFound();
+        }
+
+        // GET: /api/schedules/FindActiveSchedule/{hairdresserId}
+        /// <summary>Obtiene los nombres de los HORARIOS de una peluquería, filtrada por ID</summary>
+        /// <param name="hairdresserId">ID (GUID) de la peluquería.</param>
+        /// <response code="200">OK. Devuelve el objeto solicitado.</response>
+        /// <response code="401">Unauthorized. Cliente no autorizado.</response>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet] [Route("[action]/{hairdresserId}")] [Authorize]
         public async Task<ActionResult<List<string>>> GetNameSchedules(int hairdresserId) {
-            return await this.repo.GetNameSchedulesAsync(hairdresserId);
+            List<string> scheduleIds = await this.repo.GetNameSchedulesAsync(hairdresserId);
+            return (scheduleIds != null) ? Ok(scheduleIds) : NotFound();
+
         }
 
+        // GET: /api/schedules/GetSchedules/{hairdresserId}/{getRows}
+        /// <summary>Obtiene los HORARIOS de una peluquería, filtrada por ID</summary>
+        /// <param name="hairdresserId">ID (GUID) de la peluquería.</param>
+        /// <param name="getRows">Determina si se deben recuperar, a su vez, sus registros de horarios (Boolean).</param>
+        /// <response code="200">OK. Devuelve el objeto solicitado.</response>
+        /// <response code="401">Unauthorized. Cliente no autorizado.</response>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet] [Route("[action]/{hairdresserId}/{getRows}")] [Authorize]
         public async Task<ActionResult<List<Schedule>>> GetSchedules(int hairdresserId, bool getRows) {
-            return await this.repo.GetSchedulesAsync(hairdresserId, getRows);
+            List<Schedule> schedules = await this.repo.GetSchedulesAsync(hairdresserId, getRows);
+            return (schedules != null) ? Ok(schedules) : NotFound();
         }
 
+        // POST: /api/schedules/create
+        /// <summary>Crea un nuevo HORARIO en la tabla SCHEDULES.</summary>
+        /// <remarks>Propiedades necesarias: HairdresserId, Name, Active</remarks>
+        /// <response code="200">OK. Horario creado satisfactoriamente.</response>
+        /// <response code="401">Unauthorized. Cliente no autorizado.</response>     
+        /// <response code="409">Conflict. El registro no ha podido ser creado satisfactoriamente.</response>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [HttpPost] [Route("[action]")] [Authorize]
-        public async Task<ActionResult<Response>> InsertSchedule(Schedule schedule) {
-            return await this.repo.InsertScheduleAsync(schedule.HairdresserId, schedule.Name, schedule.Active);
+        public async Task<ActionResult> Create(Schedule schedule) {
+            Response response = await this.repo.InsertScheduleAsync(schedule.HairdresserId, schedule.Name, schedule.Active);
+            if (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) {
+                return Ok(new { satisfactoryId = response.SatisfactoryId });
+            } else {
+                return Conflict(new {
+                    ErrorCode = response.ErrorCode,
+                    ErrorMessage = response.ErrorMessage
+                });
+            }
         }
-        
+
+        // PUT: /api/schedules/update
+        /// <summary>Actualiza un HORARIO de la tabla SCHEDULES.</summary>
+        /// <remarks>Propiedades necesarias:ScheduleId, HairdresserId, Name, Active</remarks>
+        /// <response code="200">OK. Modificación realizada satisfactoriamente.</response>
+        /// <response code="401">Unauthorized. Cliente no autorizado.</response>
+        /// <response code="409">Conflict. Se ha producido un error en la actualización. Error devuelto en la respuesta.</response>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [HttpPut] [Route("[action]")] [Authorize]
-        public async Task<ActionResult<Response>> UpdateSchedule(Schedule schedule) {
-            return await this.repo.UpdateScheduleAsync(schedule.ScheduleId, schedule.HairdresserId, schedule.Name, schedule.Active);
+        public async Task<ActionResult> Update(Schedule schedule) {
+            Response response = await this.repo.UpdateScheduleAsync(schedule.ScheduleId, schedule.HairdresserId, schedule.Name, schedule.Active);
+            if (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) {
+                return Ok();
+            } else {
+                return Conflict(new {
+                    ErrorCode = response.ErrorCode,
+                    ErrorMessage = response.ErrorMessage
+                });
+            }
         }
 
         [HttpDelete] [Route("[action]/{scheduleId}")] [Authorize]
-        public async Task<ActionResult<Response>> DeleteScheduleAsync(int scheduleId) {
+        public async Task<ActionResult<Response>> Delete(int scheduleId) {
             return await this.repo.DeleteScheduleAsync(scheduleId);
         }
+        #endregion
 
+        #region EXTRA ACTIONS
         [HttpPut] [Route("[action]/{hairdresserId}/{scheduleId}")] [Authorize]
         public async Task<ActionResult<Response>> ActivateSchedule(int hairdresserId, int scheduleId) {
             return await this.repo.ActivateScheduleAsync(hairdresserId, scheduleId);
         }
-        
+        #endregion
     }
 }

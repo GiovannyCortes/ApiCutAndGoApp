@@ -42,7 +42,7 @@ namespace ApiCutAndGoApp.Controllers {
         [HttpPost] [Route("[action]")]
         public async Task<ActionResult<User?>> Create(User user) {
             User? usuario = await this.repo.InsertUserAsync(user.PasswordRead, user.Name, user.LastName, user.Phone, user.Email, user.EmailConfirmed);
-            return (usuario != null)? Ok(user) : Conflict();
+            return (usuario != null)? Ok(usuario) : Conflict();
         }
 
         // PUT: /api/users/update
