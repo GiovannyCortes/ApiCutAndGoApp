@@ -47,8 +47,8 @@ namespace ApiCutAndGoApp.Controllers {
         // GET: /api/appointments/GetAppointmentsByHairdresser/{hairdresserId}
         /// <summary>Obtiene una lista de CITAS de la tabla APPOINTMENTS, filtrando por peluquería.</summary>
         /// <param name="hairdresserId">ID (GUID) de la peluquería de la que obtener las citas.</param>
-        /// <response code="200">OK. Devuelve el objeto solicitado.</response>      
-        /// <response code="401">Unauthorized. Cliente no autorizado.</response>     
+        /// <response code="200">OK. Devuelve el objeto solicitado.</response>
+        /// <response code="401">Unauthorized. Cliente no autorizado.</response>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet] [Route("[action]/{hairdresserId}")] [Authorize]
@@ -56,12 +56,14 @@ namespace ApiCutAndGoApp.Controllers {
             return Ok(await this.repo.GetAppointmentsByHairdresserAsync(hairdresserId));
         }
 
-        // POST: /api/appointments/create
+        // POST: /api/appointments/Create
         /// <summary>Crea una nueva CITA en la tabla APPOINTMENTS.</summary>
         /// <remarks>Propiedades necesarias: UserId, HairdresserId, Date, Time</remarks>
         /// <response code="200">OK. Objeto creado satisfactoriamente. Nuevo ID devuelto</response>
+        /// <response code="401">Unauthorized. Cliente no autorizado.</response>
         /// <response code="409">Conflict. La cita no ha podido ser creada satisfactoriamente.</response>
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [HttpPost] [Route("[action]")] [Authorize]
         public async Task<ActionResult> Create(Appointment appointment) {
@@ -69,7 +71,7 @@ namespace ApiCutAndGoApp.Controllers {
             return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(response.SatisfactoryId) : Conflict();
         }
 
-        // PUT: /api/appointments/update
+        // PUT: /api/appointments/Update
         /// <summary>Actualiza una CITA de la tabla APPOINTMENTS.</summary>
         /// <remarks>Propiedades necesarias: AppointmentId, Date, Time</remarks>
         /// <response code="200">OK. Modificación realizada satisfactoriamente. ID editado, devuelto</response>
@@ -84,8 +86,8 @@ namespace ApiCutAndGoApp.Controllers {
             return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(response.SatisfactoryId) : Conflict();
         }
 
-        // DELETE: /api/appointments/delete/{appointmentId}
-        /// <summary>Elimina una CTIA de la tabla APPOINTMENTS.</summary>
+        // DELETE: /api/appointments/Delete/{appointmentId}
+        /// <summary>Elimina una CITA de la tabla APPOINTMENTS.</summary>
         /// <param name="appointmentId">ID (GUID) de la cita.</param>
         /// <response code="200">OK. Eliminación ejecutada satisfactoriamente. ID eliminado, devuelto</response>
         /// <response code="401">Unauthorized. Cliente no autorizado.</response>

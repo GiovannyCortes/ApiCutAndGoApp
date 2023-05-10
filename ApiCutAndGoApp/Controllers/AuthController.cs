@@ -1,16 +1,18 @@
 ﻿using ApiCutAndGoApp.Helpers;
-using ApiCutAndGoApp.Models;
 using CutAndGo.Interfaces;
 using CutAndGo.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using NSwag.Annotations;
+using NugetHairdressersAzure.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace ApiCutAndGoApp.Controllers {
     [Route("api/[controller]")]
     [ApiController]
+    [OpenApiTag("AUTH")]
     public class AuthController : ControllerBase {
 
         private IRepositoryHairdresser repo;
@@ -21,8 +23,15 @@ namespace ApiCutAndGoApp.Controllers {
             this.helper = helper;
         }
 
-        // Necesitamos un método para validad a nuestro usuario y devolver
-        // el Token de acceso. Dicho método SIEMPRE debe ser POST
+        // Necesitamos un método para validad a nuestro usuario y devolver el Token de acceso. Dicho método SIEMPRE debe ser POST
+
+        // POST: /api/auth/LogIn
+        /// <summary>Obtención del Token de seguridad para los métodos de la API.</summary>
+        /// <remarks>Propiedades necesarias: UserMail, Password</remarks>
+        /// <response code="200">OK. Cliente identificado, token generado y devuelto</response>
+        /// <response code="401">Unauthorized. Credenciales incorrectas.</response>  
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPost] [Route("[action]")]
         public async Task<ActionResult> LogIn(LogIn user) {
             User? usuario = await this.repo.LogInAsync(user.UserMail, user.Password);

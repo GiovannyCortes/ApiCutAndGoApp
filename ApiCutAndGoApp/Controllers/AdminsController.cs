@@ -47,7 +47,7 @@ namespace ApiCutAndGoApp.Controllers {
             return (admin != null) ? Ok(admin) : NotFound();
         }
 
-        // POST: /api/admins/create
+        // POST: /api/admins/Create
         /// <summary>Crea un nuevo ADMINISTRADOR en la tabla ADMINS.</summary>
         /// <remarks>Propiedades necesarias: HairdresserId, UserId, Role</remarks>
         /// <response code="200">OK. Objeto creado satisfactoriamente.</response>
@@ -67,7 +67,7 @@ namespace ApiCutAndGoApp.Controllers {
             }
         }
 
-        // PUT: /api/admins/update
+        // PUT: /api/admins/Update
         /// <summary>Actualiza el role de un ADMINISTRADOR de la tabla ADMINS.</summary>
         /// <remarks>Propiedades necesarias: HairdresserId, UserId, Role</remarks>
         /// <response code="200">OK. Modificación realizada satisfactoriamente.</response>
@@ -92,7 +92,7 @@ namespace ApiCutAndGoApp.Controllers {
             }
         }
 
-        // DELETE: /api/users/delete/{hairdresserId}/{userId}
+        // DELETE: /api/users/Delete/{hairdresserId}/{userId}
         /// <summary>Elimina un ADMINISTRADOR de la tabla ADMINS.</summary>
         /// <param name="hairdresserId">ID (GUID) de la peluquería (PK).</param>
         /// <param name="userId">ID (GUID) del usuario afectado (PK).</param>

@@ -32,22 +32,28 @@ namespace ApiCutAndGoApp.Controllers {
             return (user != null)? Ok(user) : NotFound();
         }
 
-        // POST: /api/users/create
+        // POST: /api/users/Create
         /// <summary>Crea un nuevo USUARIO en la tabla USERS.</summary>
-        /// <remarks>Propiedades necesarias: PasswordRead, Name, LastName, Phone, Email, EmailConfirmed</remarks>
+        /// <remarks>
+        /// Propiedades obligatorias: Name, Email, Password.
+        /// En el caso de insertar 'Image', solo se debe añadir su extensión (ejemplo: .jpg o .png)
+        /// </remarks>
         /// <response code="200">OK. Devuelve el objeto una vez ha sido creado.</response>
         /// <response code="409">Conflict. El usuario no ha podido ser creado satisfactoriamente.</response>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [HttpPost] [Route("[action]")]
-        public async Task<ActionResult<User?>> Create(User user) {
-            User? usuario = await this.repo.InsertUserAsync(user.PasswordRead, user.Name, user.LastName, user.Phone, user.Email, user.EmailConfirmed);
+        public async Task<ActionResult<User>> Create(UserRegister user) {
+            User? usuario = await this.repo.InsertUserAsync(user.Name, user.LastName, user.Phone, user.Email, user.Password, user.Image);
             return (usuario != null)? Ok(usuario) : Conflict();
         }
 
-        // PUT: /api/users/update
+        // PUT: /api/users/Update
         /// <summary>Actualiza un USUARIO de la tabla USERS.</summary>
-        /// <remarks>Propiedades necesarias: UserId, Name, LastName, Phone, Email</remarks>
+        /// <remarks>
+        /// Propiedades necesarias: UserId, Name, LastName, Phone, Email.
+        /// En el caso de insertar 'Image', solo se debe añadir su extensión (ejemplo: .jpg o .png)
+        /// </remarks>
         /// <response code="200">OK. Modificación realizada satisfactoriamente.</response>
         /// <response code="401">Unauthorized. Cliente no autorizado.</response>
         /// <response code="409">Conflict. Se ha producido un error en la actualización. Error devuelto en la respuesta.</response>
@@ -55,8 +61,8 @@ namespace ApiCutAndGoApp.Controllers {
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [HttpPut] [Route("[action]")] [Authorize]
-        public async Task<ActionResult> Update(User user) {
-            Response response = await this.repo.UpdateUserAsync(user.UserId, user.Name, user.LastName, user.Phone, user.Email);
+        public async Task<ActionResult> Update(UserUpdates user) {
+            Response response = await this.repo.UpdateUserAsync(user.UserId, user.Name, user.LastName, user.Phone, user.Email, user.Image);
             if (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) {
                 return Ok();
             } else {
@@ -67,7 +73,7 @@ namespace ApiCutAndGoApp.Controllers {
             }
         }
 
-        // DELETE: /api/users/delete/{userId}
+        // DELETE: /api/users/Delete/{userId}
         /// <summary>Elimina un USUARIO de la tabla USERS.</summary>
         /// <param name="userId">ID (GUID) del usuario.</param>
         /// <response code="200">OK. Eliminación ejecutada satisfactoriamente.</response>
@@ -92,7 +98,7 @@ namespace ApiCutAndGoApp.Controllers {
 
         #region EXTRA ACTIONS
         // GET: /api/users/UserIsAdmin/{userId}
-        /// <summary>Se verifica si un usuario es administrador</summary>
+        /// <summary>Se verifica si un USUARIO es administrador.</summary>
         /// <param name="userId">ID (GUID) del usuario.</param>
         /// <response code="200">OK. Devuelve TRUE o FALSE.</response>      
         /// <response code="401">Unauthorized. Cliente no autorizado.</response>     
@@ -104,7 +110,7 @@ namespace ApiCutAndGoApp.Controllers {
         }
 
         // GET: /api/users/EmailExist/{userId}
-        /// <summary>Se verifica si un email existe</summary>
+        /// <summary>Se verifica si un EMAIL existe.</summary>
         /// <param name="email">Email del usuario.</param>
         /// <response code="200">OK. Devuelve TRUE o FALSE.</response>      
         /// <response code="401">Unauthorized. Cliente no autorizado.</response>     
@@ -116,7 +122,7 @@ namespace ApiCutAndGoApp.Controllers {
         }
 
         // PUT: /api/users/ValidateEmail/{userId}
-        /// <summary>Se valida el email de un usuario existente</summary>
+        /// <summary>Se valida el email de un USUARIO existente.</summary>
         /// <remarks>Propiedades necesarias: UserId</remarks>
         /// <response code="200">OK. Modificación realizada satisfactoriamente.</response>
         /// <response code="401">Unauthorized. Cliente no autorizado.</response>

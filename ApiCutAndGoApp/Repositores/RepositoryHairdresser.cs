@@ -2,8 +2,6 @@
 using ApiCutAndGoApp.Helpers;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
-using System.Numerics;
-using System.Xml.Linq;
 using CutAndGo.Models;
 using CutAndGo.Interfaces;
 using static CutAndGo.Interfaces.IRepositoryHairdresser;
@@ -149,7 +147,7 @@ namespace ApiCutAndGoApp.Repositores {
             return await this.context.Users.FirstOrDefaultAsync(u => u.UserId == user_id);
         }
 
-        public async Task<User?> InsertUserAsync(string password, string name, string lastname, string phone, string email, bool econfirmed) {
+        public async Task<User?> InsertUserAsync(string name, string lastname, string phone, string email, string password, string image_extension) {
             var newid = await this.context.Users.AnyAsync() ? await this.context.Users.MaxAsync(u => u.UserId) + 1 : 1;
             string salt = HelperCryptography.GenerateSalt();
 
@@ -162,7 +160,8 @@ namespace ApiCutAndGoApp.Repositores {
                 LastName = lastname,
                 Phone = phone,
                 Email = email,
-                EmailConfirmed = econfirmed,
+                EmailConfirmed = false,
+                Image = "user_" + newid + image_extension,
                 TempToken = ""
             };
 
@@ -171,7 +170,7 @@ namespace ApiCutAndGoApp.Repositores {
             return await this.FindUserAsync(newid);
         }
 
-        public async Task<Response> UpdateUserAsync(int user_id, string name, string lastname, string phone, string email) {
+        public async Task<Response> UpdateUserAsync(int user_id, string name, string lastname, string phone, string email, string image_extension) {
             User? user = await this.FindUserAsync(user_id);
             int record = 0;
             if (user != null) {
@@ -179,6 +178,7 @@ namespace ApiCutAndGoApp.Repositores {
                 user.LastName = lastname;
                 user.Phone = phone;
                 user.Email = email;
+                user.Image = "user_" + user_id + image_extension;
                 record = await this.context.SaveChangesAsync();
             }
             return (record > 0) ? new Response { ResponseCode = (int)ResponseCodes.OK } : 
@@ -197,7 +197,7 @@ namespace ApiCutAndGoApp.Repositores {
                                      select hairdresser.HairdresserId;
 
             List<int> hairdresser_ids = await query_Hairdressers.ToListAsync();
-            Response response = null;
+            Response? response = null;
             foreach (int ids in hairdresser_ids) {
                 await this.DeleteAdminAsync(ids, user_id, user_id);
                 response = await this.DeleteHairdresserAsync(ids);
@@ -285,7 +285,7 @@ namespace ApiCutAndGoApp.Repositores {
             return await query.ToListAsync();
         }
 
-        public async Task<Response> InsertHairdresserAsync(string name, string phone, string address, int postal_code, int user_id) {
+        public async Task<Response> InsertHairdresserAsync(string name, string phone, string address, int postal_code, string image_extension, int user_id) {
             var newid = await this.context.Hairdressers.AnyAsync() ? await this.context.Hairdressers.MaxAsync(s => s.HairdresserId) + 1 : 1;
             Hairdresser hairdresser = new Hairdresser {
                 HairdresserId = newid,
@@ -293,6 +293,7 @@ namespace ApiCutAndGoApp.Repositores {
                 Phone = phone,
                 Address = address,
                 PostalCode = postal_code,
+                Image = "hairdresser_" + newid + image_extension,
                 Token = GenerateToken()
             };
             this.context.Hairdressers.Add(hairdresser);
@@ -303,7 +304,7 @@ namespace ApiCutAndGoApp.Repositores {
                     new Response { ResponseCode = (int)ResponseCodes.Failed, ErrorCode = (int)ResponseErrorCodes.GeneralError };
         }
 
-        public async Task<Response> UpdateHairdresserAsync(int hairdresser_id, string name, string phone, string address, int postal_code) {
+        public async Task<Response> UpdateHairdresserAsync(int hairdresser_id, string name, string phone, string address, int postal_code, string image_extension) {
             Hairdresser? hairdresser = await this.FindHairdresserAsync(hairdresser_id);
             int record = 0;
             if (hairdresser != null) {
@@ -311,6 +312,7 @@ namespace ApiCutAndGoApp.Repositores {
                 hairdresser.Phone = phone;
                 hairdresser.Address = address;
                 hairdresser.PostalCode = postal_code;
+                hairdresser.Image = "hairdresser_" + hairdresser_id + image_extension;
                 record = await this.context.SaveChangesAsync();
             }
             return (record > 0) ? new Response { ResponseCode = (int)ResponseCodes.OK, SatisfactoryId = hairdresser_id } :
@@ -324,14 +326,14 @@ namespace ApiCutAndGoApp.Repositores {
         public async Task<Response> DeleteHairdresserAsync(int hairdresser_id) {
             Hairdresser? hairdresser = await this.FindHairdresserAsync(hairdresser_id);
             if (hairdresser != null) {
-                /// 1 - Borrar los registros de Admin
+                // 1 - Borrar los registros de Admin
                 List<Admin> admins = await this.GetAdminsAsync(hairdresser_id);
                 foreach (Admin admin in admins) {
                     this.context.Admins.Remove(admin);
                 }
                 await this.context.SaveChangesAsync();
 
-                /// 2 - Borrar los registros de Horario
+                // 2 - Borrar los registros de Horario
                 List<Schedule> schedules = await this.GetSchedulesAsync(hairdresser_id, true);
                 foreach (Schedule schedule in schedules) {
                     foreach (Schedule_Row schedule_Row in schedule.ScheduleRows) {
@@ -342,7 +344,7 @@ namespace ApiCutAndGoApp.Repositores {
                 }
                 await this.context.SaveChangesAsync();
 
-                /// 3 - Borrar los registros de citas y sus relaciones con servicios
+                // 3 - Borrar los registros de citas y sus relaciones con servicios
                 List<Appointment> appointments = await this.GetAppointmentsByHairdresserAsync(hairdresser_id);
                 foreach (Appointment appointment in appointments) {
                     List<Appointment_Service> appointment_Services = await this.GetAppointmentServicesAsync(appointment.AppointmentId);
@@ -354,14 +356,14 @@ namespace ApiCutAndGoApp.Repositores {
                 }
                 await this.context.SaveChangesAsync();
 
-                /// 4 - Borrar los registros de servicios
+                // 4 - Borrar los registros de servicios
                 List<Service> services = await this.GetServicesByHairdresserAsync(hairdresser_id);
                 foreach (Service service in services) {
                     this.context.Services.Remove(service);
                 }
                 await this.context.SaveChangesAsync();
 
-                /// 5 - Eliminar la peluquería
+                // 5 - Eliminar la peluquería
                 this.context.Hairdressers.Remove(hairdresser);
                 int record = await this.context.SaveChangesAsync();
 
