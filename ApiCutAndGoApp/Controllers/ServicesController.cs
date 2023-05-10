@@ -77,7 +77,7 @@ namespace ApiCutAndGoApp.Controllers {
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [HttpPost] [Route("[action]")] [Authorize]
-        public async Task<ActionResult> Insert(Service service) {
+        public async Task<ActionResult> Insert(ServiceRegister service) {
             Response response = await this.repo.InsertServiceAsync(service.HairdresserId, service.Name, service.Price, service.TiempoAprox);
             return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(response.SatisfactoryId) : Conflict();
         }

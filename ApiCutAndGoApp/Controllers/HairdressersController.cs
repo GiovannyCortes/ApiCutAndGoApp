@@ -84,8 +84,8 @@ namespace ApiCutAndGoApp.Controllers {
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [HttpPost] [Route("[action]")] [Authorize]
         public async Task<ActionResult> Create(HairdresserRegister hdrs) {
-            Response response = await this.repo.InsertHairdresserAsync(hdrs.Name, hdrs.Phone, hdrs.Address, hdrs.PostalCode, hdrs.Image, hdrs.UserId);
-            return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(response.SatisfactoryId) : Conflict();
+            Response response = await this.repo.InsertHairdresserAsync(hdrs.Name, hdrs.Phone, hdrs.Address, hdrs.PostalCode, hdrs.ImageExtension, hdrs.UserId);
+            return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(new { satisfactoryId = response.SatisfactoryId }) : Conflict();
         }
 
         // PUT: /api/hairdressers/Update
@@ -99,8 +99,8 @@ namespace ApiCutAndGoApp.Controllers {
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [HttpPut] [Route("[action]")] [Authorize]
         public async Task<ActionResult> Update(HairdresserUpdates hdrs) {
-            Response response = await this.repo.UpdateHairdresserAsync(hdrs.HairdresserId, hdrs.Name, hdrs.Phone, hdrs.Address, hdrs.PostalCode, hdrs.Image);
-            return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(response.SatisfactoryId) : Conflict();
+            Response response = await this.repo.UpdateHairdresserAsync(hdrs.HairdresserId, hdrs.Name, hdrs.Phone, hdrs.Address, hdrs.PostalCode, hdrs.ImageExtension);
+            return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(new { satisfactoryId = response.SatisfactoryId }) : Conflict();
         }
 
         // DELETE: /api/hairdressers/Delete/{hairdresserId}
@@ -115,7 +115,7 @@ namespace ApiCutAndGoApp.Controllers {
         [HttpDelete] [Route("[action]/{hairdresserId}")] [Authorize]
         public async Task<ActionResult> Delete(int hairdresserId) {
             Response response = await this.repo.DeleteHairdresserAsync(hairdresserId);
-            return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(response.SatisfactoryId) : Conflict();
+            return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(new { satisfactoryId = response.SatisfactoryId }) : Conflict();
         }
         #endregion
 

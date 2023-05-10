@@ -66,7 +66,7 @@ namespace ApiCutAndGoApp.Controllers {
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [HttpPost] [Route("[action]")] [Authorize]
-        public async Task<ActionResult> Create(Schedule_Row srow) {
+        public async Task<ActionResult> Create(Schedule_RowRegister srow) {
             Response response = await this.repo.InsertScheduleRowsAsync(srow.ScheduleId, srow.Start, srow.End, srow.Monday, srow.Tuesday, srow.Wednesday, 
                                                                          srow.Thursday, srow.Friday, srow.Saturday, srow.Sunday);
             if (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) {

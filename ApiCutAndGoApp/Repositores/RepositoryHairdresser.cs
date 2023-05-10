@@ -149,24 +149,25 @@ namespace ApiCutAndGoApp.Repositores {
 
         public async Task<User?> InsertUserAsync(string name, string lastname, string phone, string email, string password, string image_extension) {
             var newid = await this.context.Users.AnyAsync() ? await this.context.Users.MaxAsync(u => u.UserId) + 1 : 1;
-            string salt = HelperCryptography.GenerateSalt();
+            if (!await EmailExistAsync(email.ToLower())) {
+                string salt = HelperCryptography.GenerateSalt();
+                User user = new User {
+                    UserId = newid,
+                    Salt = salt,
+                    Password = HelperCryptography.EncryptContent(password, salt),
+                    PasswordRead = password,
+                    Name = name,
+                    LastName = lastname,
+                    Phone = phone,
+                    Email = email.ToLower(),
+                    EmailConfirmed = false,
+                    Image = "user_" + newid + image_extension,
+                    TempToken = ""
+                };
 
-            User user = new User {
-                UserId = newid,
-                Salt = salt,
-                Password = HelperCryptography.EncryptContent(password, salt),
-                PasswordRead = password,
-                Name = name,
-                LastName = lastname,
-                Phone = phone,
-                Email = email,
-                EmailConfirmed = false,
-                Image = "user_" + newid + image_extension,
-                TempToken = ""
-            };
-
-            this.context.Users.Add(user);
-            await this.context.SaveChangesAsync();
+                this.context.Users.Add(user);
+                await this.context.SaveChangesAsync();
+            }
             return await this.FindUserAsync(newid);
         }
 
@@ -177,7 +178,7 @@ namespace ApiCutAndGoApp.Repositores {
                 user.Name = name;
                 user.LastName = lastname;
                 user.Phone = phone;
-                user.Email = email;
+                user.Email = email.ToLower();
                 user.Image = "user_" + user_id + image_extension;
                 record = await this.context.SaveChangesAsync();
             }
@@ -367,7 +368,7 @@ namespace ApiCutAndGoApp.Repositores {
                 this.context.Hairdressers.Remove(hairdresser);
                 int record = await this.context.SaveChangesAsync();
 
-                return (record > 0) ? new Response { ResponseCode = (int)ResponseCodes.OK } : 
+                return (record > 0) ? new Response { SatisfactoryId = hairdresser_id, ResponseCode = (int)ResponseCodes.OK } : 
                                       new Response { 
                                           ResponseCode = (int)ResponseCodes.Failed,
                                           ErrorCode = (int)ResponseErrorCodes.GeneralError,
@@ -443,7 +444,7 @@ namespace ApiCutAndGoApp.Repositores {
 
                 this.context.Schedules.Add(schedule);
                 await this.context.SaveChangesAsync();
-                return new Response { ResponseCode = (int)ResponseCodes.OK };
+                return new Response { SatisfactoryId = newid, ResponseCode = (int)ResponseCodes.OK };
             } else {
                 return new Response { 
                     ResponseCode = (int)ResponseCodes.Failed,

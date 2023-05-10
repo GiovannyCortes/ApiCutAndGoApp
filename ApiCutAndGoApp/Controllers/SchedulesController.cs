@@ -87,7 +87,7 @@ namespace ApiCutAndGoApp.Controllers {
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [HttpPost] [Route("[action]")] [Authorize]
-        public async Task<ActionResult> Create(Schedule schedule) {
+        public async Task<ActionResult> Create(ScheduleRegister schedule) {
             Response response = await this.repo.InsertScheduleAsync(schedule.HairdresserId, schedule.Name, schedule.Active);
             if (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) {
                 return Ok(new { satisfactoryId = response.SatisfactoryId });
@@ -109,7 +109,7 @@ namespace ApiCutAndGoApp.Controllers {
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [HttpPut] [Route("[action]")] [Authorize]
-        public async Task<ActionResult> Update(Schedule schedule) {
+        public async Task<ActionResult> Update(ScheduleUpdates schedule) {
             Response response = await this.repo.UpdateScheduleAsync(schedule.ScheduleId, schedule.HairdresserId, schedule.Name, schedule.Active);
             if (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) {
                 return Ok();

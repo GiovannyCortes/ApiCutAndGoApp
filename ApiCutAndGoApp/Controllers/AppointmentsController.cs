@@ -66,7 +66,7 @@ namespace ApiCutAndGoApp.Controllers {
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [HttpPost] [Route("[action]")] [Authorize]
-        public async Task<ActionResult> Create(Appointment appointment) {
+        public async Task<ActionResult> Create(AppointmentRegister appointment) {
             Response response = await this.repo.InsertAppointmentAsync(appointment.UserId, appointment.HairdresserId, appointment.Date, appointment.Time);
             return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(response.SatisfactoryId) : Conflict();
         }
@@ -81,7 +81,7 @@ namespace ApiCutAndGoApp.Controllers {
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [HttpPut] [Route("[action]")] [Authorize]
-        public async Task<ActionResult> Update(Appointment appointment) {
+        public async Task<ActionResult> Update(AppointmentUpdates appointment) {
             Response response = await this.repo.UpdateAppointmentAsync(appointment.AppointmentId, appointment.Date, appointment.Time);
             return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(response.SatisfactoryId) : Conflict();
         }

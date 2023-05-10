@@ -35,7 +35,7 @@ namespace ApiCutAndGoApp.Controllers {
         // POST: /api/users/Create
         /// <summary>Crea un nuevo USUARIO en la tabla USERS.</summary>
         /// <remarks>
-        /// Propiedades obligatorias: Name, Email, Password.
+        /// Propiedades necesarias: Name, Email, Password.
         /// En el caso de insertar 'Image', solo se debe añadir su extensión (ejemplo: .jpg o .png)
         /// </remarks>
         /// <response code="200">OK. Devuelve el objeto una vez ha sido creado.</response>
@@ -44,7 +44,7 @@ namespace ApiCutAndGoApp.Controllers {
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [HttpPost] [Route("[action]")]
         public async Task<ActionResult<User>> Create(UserRegister user) {
-            User? usuario = await this.repo.InsertUserAsync(user.Name, user.LastName, user.Phone, user.Email, user.Password, user.Image);
+            User? usuario = await this.repo.InsertUserAsync(user.Name, user.LastName, user.Phone, user.Email, user.Password, user.ImageExtension);
             return (usuario != null)? Ok(usuario) : Conflict();
         }
 
@@ -62,7 +62,7 @@ namespace ApiCutAndGoApp.Controllers {
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [HttpPut] [Route("[action]")] [Authorize]
         public async Task<ActionResult> Update(UserUpdates user) {
-            Response response = await this.repo.UpdateUserAsync(user.UserId, user.Name, user.LastName, user.Phone, user.Email, user.Image);
+            Response response = await this.repo.UpdateUserAsync(user.UserId, user.Name, user.LastName, user.Phone, user.Email, user.ImageExtension);
             if (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) {
                 return Ok();
             } else {
