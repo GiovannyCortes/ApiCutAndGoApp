@@ -77,14 +77,14 @@ namespace ApiCutAndGoApp.Controllers {
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [HttpPost] [Route("[action]")] [Authorize]
-        public async Task<ActionResult> Insert(ServiceRegister service) {
+        public async Task<ActionResult> Create(ServiceRegister service) {
             Response response = await this.repo.InsertServiceAsync(service.HairdresserId, service.Name, service.Price, service.TiempoAprox);
-            return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(response.SatisfactoryId) : Conflict();
+            return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(new { satisfactoryId = response.SatisfactoryId }) : Conflict();
         }
 
         // PUT: /api/services/Update
         /// <summary>Actualiza un SERVICIO de la tabla SERVICES.</summary>
-        /// <remarks>Propiedades necesarias: ServiceId, Name, Price, TiempoAprox</remarks>
+        /// <remarks>Propiedades necesarias: ServiceId, HairdresserId Name, Price, TiempoAprox</remarks>
         /// <response code="200">OK. Modificación realizada satisfactoriamente. ID editado, devuelto</response>
         /// <response code="401">Unauthorized. Cliente no autorizado.</response>
         /// <response code="409">Conflict. Se ha producido un error en la actualización.</response>
@@ -94,7 +94,7 @@ namespace ApiCutAndGoApp.Controllers {
         [HttpPut] [Route("[action]")] [Authorize]
         public async Task<ActionResult> Update(Service service) {
             Response response = await this.repo.UpdateServiceAsync(service.ServiceId, service.Name, service.Price, service.TiempoAprox);
-            return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(response.SatisfactoryId) : Conflict();
+            return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(new { satisfactoryId = response.SatisfactoryId }) : Conflict();
         }
 
         // DELETE: /api/services/Delete/{serviceId}
@@ -109,7 +109,7 @@ namespace ApiCutAndGoApp.Controllers {
         [HttpDelete] [Route("[action]/{serviceId}")] [Authorize]
         public async Task<ActionResult> Delete(int serviceId) {
             Response response = await this.repo.DeleteServiceAsync(serviceId);
-            return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(response.SatisfactoryId) : Conflict();
+            return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(new { satisfactoryId = response.SatisfactoryId }) : Conflict();
         }
         #endregion
     }

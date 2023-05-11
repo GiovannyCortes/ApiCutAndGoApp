@@ -58,7 +58,7 @@ namespace ApiCutAndGoApp.Controllers {
         public async Task<ActionResult> Create(Admin admin) {
             Response response = await this.repo.InsertAdminAsync(admin.HairdresserId, admin.UserId, admin.Role);
             if (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) {
-                return Ok();
+                return Ok(new { satisfactoryId = response.SatisfactoryId });
             } else {
                 return Conflict(new {
                     ErrorCode = response.ErrorCode,
@@ -80,7 +80,7 @@ namespace ApiCutAndGoApp.Controllers {
         public async Task<ActionResult> Update(Admin admin) {
             Response response = await this.repo.UpdateAdminAsync(admin.HairdresserId, admin.UserId, admin.Role);
             if (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) {
-                return Ok();
+                return Ok(new { satisfactoryId = response.SatisfactoryId });
             } else {
                 if (response.ErrorCode == (int)IRepositoryHairdresser.ResponseErrorCodes.RecordNotFound) {
                     return NotFound();
@@ -110,7 +110,7 @@ namespace ApiCutAndGoApp.Controllers {
 
             Response response = await this.repo.DeleteAdminAsync(hairdresserId, usuario.UserId, userId);
             if (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) {
-                return Ok();
+                return Ok(new { satisfactoryId = response.SatisfactoryId });
             } else {
                 return Conflict(new {
                     ErrorCode = response.ErrorCode,

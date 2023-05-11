@@ -680,12 +680,13 @@ namespace ApiCutAndGoApp.Repositores {
                                   new Response { ResponseCode = (int)ResponseCodes.Failed, ErrorCode = (int)ResponseErrorCodes.GeneralError };
         }
 
-        public async Task<Response> UpdateAppointmentAsync(int appointment_id, DateTime date, TimeSpan time) {
+        public async Task<Response> UpdateAppointmentAsync(int appointment_id, DateTime date, TimeSpan time, StatusAppointment status) {
             Appointment? appointment = await this.FindAppoinmentAsync(appointment_id);
             int record = 0;
             if (appointment != null) {
                 appointment.Date = date;
                 appointment.Time = time;
+                appointment.Status = status;
                 record = await context.SaveChangesAsync();
             }
             return (record > 0) ? new Response { ResponseCode = (int)ResponseCodes.OK, SatisfactoryId = appointment_id } :

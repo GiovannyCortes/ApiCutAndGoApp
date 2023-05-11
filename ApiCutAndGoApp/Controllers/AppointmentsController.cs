@@ -68,7 +68,7 @@ namespace ApiCutAndGoApp.Controllers {
         [HttpPost] [Route("[action]")] [Authorize]
         public async Task<ActionResult> Create(AppointmentRegister appointment) {
             Response response = await this.repo.InsertAppointmentAsync(appointment.UserId, appointment.HairdresserId, appointment.Date, appointment.Time);
-            return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(response.SatisfactoryId) : Conflict();
+            return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(new { satisfactoryId = response.SatisfactoryId }) : Conflict();
         }
 
         // PUT: /api/appointments/Update
@@ -82,8 +82,8 @@ namespace ApiCutAndGoApp.Controllers {
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [HttpPut] [Route("[action]")] [Authorize]
         public async Task<ActionResult> Update(AppointmentUpdates appointment) {
-            Response response = await this.repo.UpdateAppointmentAsync(appointment.AppointmentId, appointment.Date, appointment.Time);
-            return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(response.SatisfactoryId) : Conflict();
+            Response response = await this.repo.UpdateAppointmentAsync(appointment.AppointmentId, appointment.Date, appointment.Time, appointment.Status);
+            return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(new { satisfactoryId = response.SatisfactoryId }) : Conflict();
         }
 
         // DELETE: /api/appointments/Delete/{appointmentId}
@@ -98,7 +98,7 @@ namespace ApiCutAndGoApp.Controllers {
         [HttpDelete] [Route("[action]/{appointmentId}")] [Authorize]
         public async Task<ActionResult> Delete(int appointmentId) {
             Response response = await this.repo.DeleteAppointmentAsync(appointmentId);
-            return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(response.SatisfactoryId) : Conflict();
+            return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(new { satisfactoryId = response.SatisfactoryId }) : Conflict();
         }
         #endregion
 
@@ -115,7 +115,7 @@ namespace ApiCutAndGoApp.Controllers {
         [HttpPut] [Route("[action]/{appointmentId}")] [Authorize]
         public async Task<ActionResult> ApproveAppointment(int appointmentId) {
             Response response = await this.repo.ApproveAppointmentAsync(appointmentId);
-            return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(response.SatisfactoryId) : Conflict();
+            return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(new { satisfactoryId = response.SatisfactoryId }) : Conflict();
         }
         #endregion
 

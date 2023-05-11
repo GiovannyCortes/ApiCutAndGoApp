@@ -56,9 +56,9 @@ namespace ApiCutAndGoApp.Controllers {
             return (scheduleRow != null) ? Ok(scheduleRow) : NotFound();
         }
 
-        // POST: /api/schedulerows/create
+        // POST: /api/schedulerows/Create
         /// <summary>Crea un nuevo REGISTRO en la tabla SCHEDULE_ROWS.</summary>
-        /// <remarks>Propiedades necesarias:ScheduleId, Start, End, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday</remarks>
+        /// <remarks>Propiedades necesarias:ScheduleId, Start (hh:mm:ss), End (hh:mm:ss), Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday</remarks>
         /// <response code="200">OK. Registro creado satisfactoriamente.</response>
         /// <response code="401">Unauthorized. Cliente no autorizado.</response>     
         /// <response code="409">Conflict. El registro no ha podido ser creado satisfactoriamente.</response>
@@ -68,9 +68,9 @@ namespace ApiCutAndGoApp.Controllers {
         [HttpPost] [Route("[action]")] [Authorize]
         public async Task<ActionResult> Create(Schedule_RowRegister srow) {
             Response response = await this.repo.InsertScheduleRowsAsync(srow.ScheduleId, srow.Start, srow.End, srow.Monday, srow.Tuesday, srow.Wednesday, 
-                                                                         srow.Thursday, srow.Friday, srow.Saturday, srow.Sunday);
+                                                                        srow.Thursday, srow.Friday, srow.Saturday, srow.Sunday);
             if (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) {
-                return Ok();
+                return Ok(new { satisfactoryId = response.SatisfactoryId });
             } else {
                 return Conflict(new {
                     ErrorCode = response.ErrorCode,
@@ -80,7 +80,7 @@ namespace ApiCutAndGoApp.Controllers {
         }
 
 
-        // DELETE: /api/schedulerows/delete/{scheduleRowId}
+        // DELETE: /api/schedulerows/Delete/{scheduleRowId}
         /// <summary>Elimina un REGISTRO de la tabla SCHEDULE_ROWS.</summary>
         /// <param name="scheduleRowId">ID (GUID) del registro de horario.</param>
         /// <response code="200">OK. Eliminación ejecutada satisfactoriamente.</response>
@@ -93,7 +93,7 @@ namespace ApiCutAndGoApp.Controllers {
         public async Task<ActionResult> Delete(int scheduleRowId) {
             Response response = await this.repo.DeleteScheduleRowsAsync(scheduleRowId);
             if (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) {
-                return Ok();
+                return Ok(new { satisfactoryId = response.SatisfactoryId });
             } else {
                 return Conflict(new {
                     ErrorCode = response.ErrorCode,

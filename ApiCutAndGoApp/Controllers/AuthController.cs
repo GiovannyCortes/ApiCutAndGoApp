@@ -53,7 +53,7 @@ namespace ApiCutAndGoApp.Controllers {
                     issuer: this.helper.Issuer,
                     audience: this.helper.Audience,
                     signingCredentials: credentials,
-                    expires: DateTime.UtcNow.AddMinutes(30),
+                    expires: DateTime.UtcNow.AddMinutes(60),
                     notBefore: DateTime.UtcNow
                 );
 
