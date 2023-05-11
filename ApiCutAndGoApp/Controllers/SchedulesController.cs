@@ -112,7 +112,7 @@ namespace ApiCutAndGoApp.Controllers {
         public async Task<ActionResult> Update(ScheduleUpdates schedule) {
             Response response = await this.repo.UpdateScheduleAsync(schedule.ScheduleId, schedule.HairdresserId, schedule.Name, schedule.Active);
             if (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) {
-                return Ok();
+                return Ok(new { satisfactoryId = response.SatisfactoryId });
             } else {
                 return Conflict(new {
                     ErrorCode = response.ErrorCode,
@@ -121,16 +121,51 @@ namespace ApiCutAndGoApp.Controllers {
             }
         }
 
+        // DELETE: /api/schedules/delete
+        /// <summary>Elimina un HORARIO de la tabla SCHEDULES.</summary>
+        /// <param name="scheduleId">ID (GUID) del horario.</param>
+        /// <response code="200">OK. Modificación realizada satisfactoriamente.</response>
+        /// <response code="401">Unauthorized. Cliente no autorizado.</response>
+        /// <response code="409">Conflict. Se ha producido un error en la actualización. Error devuelto en la respuesta.</response>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [HttpDelete] [Route("[action]/{scheduleId}")] [Authorize]
-        public async Task<ActionResult<Response>> Delete(int scheduleId) {
-            return await this.repo.DeleteScheduleAsync(scheduleId);
+        public async Task<ActionResult> Delete(int scheduleId) {
+            Response response = await this.repo.DeleteScheduleAsync(scheduleId);
+            if (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) {
+                return Ok(new { satisfactoryId = response.SatisfactoryId });
+            } else {
+                return Conflict(new {
+                    ErrorCode = response.ErrorCode,
+                    ErrorMessage = response.ErrorMessage
+                });
+            }
         }
         #endregion
 
         #region EXTRA ACTIONS
+        // PUT: /api/schedules/update
+        /// <summary>Activa un horario de la tabla SCHEDULES.</summary>
+        /// <param name="hairdresserId">ID (GUID) de la peluquería.</param>
+        /// <param name="scheduleId">ID (GUID) del horario.</param>
+        /// <response code="200">OK. Modificación realizada satisfactoriamente.</response>
+        /// <response code="401">Unauthorized. Cliente no autorizado.</response>
+        /// <response code="409">Conflict. Se ha producido un error en la actualización. Error devuelto en la respuesta.</response>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [HttpPut] [Route("[action]/{hairdresserId}/{scheduleId}")] [Authorize]
-        public async Task<ActionResult<Response>> ActivateSchedule(int hairdresserId, int scheduleId) {
-            return await this.repo.ActivateScheduleAsync(hairdresserId, scheduleId);
+        public async Task<ActionResult> ActivateSchedule(int hairdresserId, int scheduleId) {
+            Response response = await this.repo.ActivateScheduleAsync(hairdresserId, scheduleId);
+            if (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) {
+                return Ok(new { satisfactoryId = response.SatisfactoryId });
+            } else {
+                return Conflict(new {
+                    ErrorCode = response.ErrorCode,
+                    ErrorMessage = response.ErrorMessage
+                });
+            }
         }
         #endregion
     }
