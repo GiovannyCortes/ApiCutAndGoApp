@@ -27,7 +27,7 @@ namespace ApiCutAndGoApp.Controllers {
         /// <response code="401">Unauthorized. Credenciales incorrectas.</response>  
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [HttpGet] [Route("[action]")]
+        [HttpGet] [Route("[action]")] [Authorize]
         public ActionResult<string> GenerateToken() {
             return Ok(this.priv_repo.GenerateToken());
         }
