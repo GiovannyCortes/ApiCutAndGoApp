@@ -1,4 +1,5 @@
 ﻿using ApiCutAndGoApp.Helpers;
+using ApiCutAndGoApp.Repositores;
 using CutAndGo.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,11 +12,13 @@ namespace ApiCutAndGoApp.Controllers {
     public class TokensController : ControllerBase {
 
         private IRepositoryHairdresser repo;
+        private RepositoryHairdresser priv_repo;
         private HelperOAuthToken helper;
 
-        public TokensController(IRepositoryHairdresser repo, HelperOAuthToken helper) {
+        public TokensController(IRepositoryHairdresser repo, RepositoryHairdresser priv_repo, HelperOAuthToken helper) {
             this.repo = repo;
             this.helper = helper;
+            this.priv_repo = priv_repo;
         }
 
         // GET: /api/tokens/GenerateToken
@@ -24,9 +27,9 @@ namespace ApiCutAndGoApp.Controllers {
         /// <response code="401">Unauthorized. Credenciales incorrectas.</response>  
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [HttpGet] [Route("[action]")] [Authorize]
+        [HttpGet] [Route("[action]")]
         public ActionResult<string> GenerateToken() {
-            return Ok(this.repo.GenerateToken());
+            return Ok(this.priv_repo.GenerateToken());
         }
 
         // POST: /api/tokens/UserAssignTokenAsync

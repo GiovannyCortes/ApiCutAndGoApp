@@ -20,6 +20,7 @@ var builder = WebApplication.CreateBuilder(args);
 string connectionString = builder.Configuration.GetConnectionString("SqlHairdressersAzure");
     
     builder.Services.AddTransient<IRepositoryHairdresser, RepositoryHairdresser>();
+    builder.Services.AddTransient<RepositoryHairdresser>();
     builder.Services.AddDbContext<HairdressersContext>(
             options => options.UseSqlServer(connectionString)
         );
