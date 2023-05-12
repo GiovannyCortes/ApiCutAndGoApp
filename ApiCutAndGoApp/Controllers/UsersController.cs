@@ -64,7 +64,7 @@ namespace ApiCutAndGoApp.Controllers {
         public async Task<ActionResult> Update(UserUpdates user) {
             Response response = await this.repo.UpdateUserAsync(user.UserId, user.Name, user.LastName, user.Phone, user.Email, user.ImageExtension);
             if (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) {
-                return Ok(new { satisfactoryId = response.SatisfactoryId });
+                return Ok(response.SatisfactoryId);
             } else {
                 return Conflict(new {
                     ErrorCode = response.ErrorCode,
@@ -86,7 +86,7 @@ namespace ApiCutAndGoApp.Controllers {
         public async Task<ActionResult> Delete(int userId) {
             Response response = await this.repo.DeleteUserAsync(userId);
             if (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) {
-                return Ok(new { satisfactoryId = response.SatisfactoryId });
+                return Ok(response.SatisfactoryId);
             } else {
                 return Conflict(new {
                     ErrorCode = response.ErrorCode,
@@ -136,7 +136,7 @@ namespace ApiCutAndGoApp.Controllers {
         public async Task<ActionResult> ValidateEmail(int userId) {
             Response response = await this.repo.ValidateEmailAsync(userId);
             if (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) {
-                return Ok(new { satisfactoryId = response.SatisfactoryId });
+                return Ok(response.SatisfactoryId);
             } else {
                 if (response.ErrorCode == (int)IRepositoryHairdresser.ResponseErrorCodes.RecordNotFound) {
                     return NotFound();

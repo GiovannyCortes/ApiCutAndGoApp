@@ -5,14 +5,18 @@ using System.Data;
 using CutAndGo.Models;
 using CutAndGo.Interfaces;
 using static CutAndGo.Interfaces.IRepositoryHairdresser;
+using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace ApiCutAndGoApp.Repositores {
     public class RepositoryHairdresser : IRepositoryHairdresser {
 
-        HairdressersContext context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private HairdressersContext context;
 
-        public RepositoryHairdresser(HairdressersContext context) {
+        public RepositoryHairdresser(HairdressersContext context, IHttpContextAccessor httpContextAccessor) {
             this.context = context;
+            this._httpContextAccessor = httpContextAccessor;
         }
         
         #region CREDENTIALS
@@ -70,8 +74,11 @@ namespace ApiCutAndGoApp.Repositores {
             return await context.Admins.AnyAsync(admin => admin.UserId == user_id && admin.HairdresserId == hairdresser_id);
         }
 
-        public async Task<bool> CompareAdminRoleAsync(int hairdresser_id, int user_id_me, int user_id_other) {
-            Admin? userMe = await this.context.Admins.FirstOrDefaultAsync(a => a.UserId == user_id_me);
+        public async Task<bool> CompareAdminRoleAsync(int hairdresser_id, int user_id_other) {
+            Claim? claim = this._httpContextAccessor.HttpContext.User.Claims.SingleOrDefault(x => x.Type == "UserData");
+            User? usuario = JsonConvert.DeserializeObject<User?>(claim.Value);
+
+            Admin? userMe = await this.context.Admins.FirstOrDefaultAsync(a => a.UserId == usuario.UserId);
             Admin? userOther = await this.context.Admins.FirstOrDefaultAsync(a => a.UserId == user_id_other);
             bool response = false;
             if (userMe != null && userOther != null) {
@@ -115,8 +122,8 @@ namespace ApiCutAndGoApp.Repositores {
                                   };
         }
 
-        public async Task<Response> DeleteAdminAsync(int hairdresser_id, int user_id_me, int user_id_other) {
-            if (await this.CompareAdminRoleAsync(hairdresser_id, user_id_me, user_id_other)) {
+        public async Task<Response> DeleteAdminAsync(int hairdresser_id, int user_id_other) {
+            if (await this.CompareAdminRoleAsync(hairdresser_id, user_id_other)) {
                 Admin? admin = await FindAdminAsync(hairdresser_id, user_id_other);
                 if (admin != null) {
                     context.Admins.Remove(admin);
@@ -201,7 +208,7 @@ namespace ApiCutAndGoApp.Repositores {
             List<int> hairdresser_ids = await query_Hairdressers.ToListAsync();
             Response? response = null;
             foreach (int ids in hairdresser_ids) {
-                await this.DeleteAdminAsync(ids, user_id, user_id);
+                await this.DeleteAdminAsync(ids, user_id);
                 response = await this.DeleteHairdresserAsync(ids);
             }
             return (response != null && response.ResponseCode == (int)ResponseCodes.OK);

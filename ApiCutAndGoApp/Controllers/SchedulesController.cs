@@ -90,7 +90,7 @@ namespace ApiCutAndGoApp.Controllers {
         public async Task<ActionResult> Create(ScheduleRegister schedule) {
             Response response = await this.repo.InsertScheduleAsync(schedule.HairdresserId, schedule.Name, schedule.Active);
             if (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) {
-                return Ok(new { satisfactoryId = response.SatisfactoryId });
+                return Ok(response.SatisfactoryId);
             } else {
                 return Conflict(new {
                     ErrorCode = response.ErrorCode,
@@ -112,7 +112,7 @@ namespace ApiCutAndGoApp.Controllers {
         public async Task<ActionResult> Update(ScheduleUpdates schedule) {
             Response response = await this.repo.UpdateScheduleAsync(schedule.ScheduleId, schedule.HairdresserId, schedule.Name, schedule.Active);
             if (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) {
-                return Ok(new { satisfactoryId = response.SatisfactoryId });
+                return Ok(response.SatisfactoryId);
             } else {
                 return Conflict(new {
                     ErrorCode = response.ErrorCode,
@@ -134,7 +134,7 @@ namespace ApiCutAndGoApp.Controllers {
         public async Task<ActionResult> Delete(int scheduleId) {
             Response response = await this.repo.DeleteScheduleAsync(scheduleId);
             if (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) {
-                return Ok(new { satisfactoryId = response.SatisfactoryId });
+                return Ok(response.SatisfactoryId);
             } else {
                 return Conflict(new {
                     ErrorCode = response.ErrorCode,
@@ -159,7 +159,7 @@ namespace ApiCutAndGoApp.Controllers {
         public async Task<ActionResult> ActivateSchedule(int hairdresserId, int scheduleId) {
             Response response = await this.repo.ActivateScheduleAsync(hairdresserId, scheduleId);
             if (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) {
-                return Ok(new { satisfactoryId = response.SatisfactoryId });
+                return Ok(response.SatisfactoryId);
             } else {
                 return Conflict(new {
                     ErrorCode = response.ErrorCode,

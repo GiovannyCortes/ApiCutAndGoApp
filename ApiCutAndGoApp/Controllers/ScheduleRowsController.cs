@@ -70,7 +70,7 @@ namespace ApiCutAndGoApp.Controllers {
             Response response = await this.repo.InsertScheduleRowsAsync(srow.ScheduleId, srow.Start, srow.End, srow.Monday, srow.Tuesday, srow.Wednesday, 
                                                                         srow.Thursday, srow.Friday, srow.Saturday, srow.Sunday);
             if (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) {
-                return Ok(new { satisfactoryId = response.SatisfactoryId });
+                return Ok(response.SatisfactoryId);
             } else {
                 return Conflict(new {
                     ErrorCode = response.ErrorCode,
@@ -93,7 +93,7 @@ namespace ApiCutAndGoApp.Controllers {
         public async Task<ActionResult> Delete(int scheduleRowId) {
             Response response = await this.repo.DeleteScheduleRowsAsync(scheduleRowId);
             if (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) {
-                return Ok(new { satisfactoryId = response.SatisfactoryId });
+                return Ok(response.SatisfactoryId);
             } else {
                 return Conflict(new {
                     ErrorCode = response.ErrorCode,

@@ -14,6 +14,8 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddSingleton<HelperOAuthToken>();
     HelperOAuthToken helperOAuthToken = new HelperOAuthToken(builder.Configuration);
 
+    builder.Services.AddHttpContextAccessor();
+
     // Añadimos las opciones de autentificación
     builder.Services.AddAuthentication(helperOAuthToken.GetAuthenticationOptions()).AddJwtBearer(helperOAuthToken.GetJwtOptions());
 

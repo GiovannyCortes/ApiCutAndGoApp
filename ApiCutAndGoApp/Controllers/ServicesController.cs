@@ -79,7 +79,7 @@ namespace ApiCutAndGoApp.Controllers {
         [HttpPost] [Route("[action]")] [Authorize]
         public async Task<ActionResult> Create(ServiceRegister service) {
             Response response = await this.repo.InsertServiceAsync(service.HairdresserId, service.Name, service.Price, service.TiempoAprox);
-            return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(new { satisfactoryId = response.SatisfactoryId }) : Conflict();
+            return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(response.SatisfactoryId) : Conflict();
         }
 
         // PUT: /api/services/Update
@@ -94,7 +94,7 @@ namespace ApiCutAndGoApp.Controllers {
         [HttpPut] [Route("[action]")] [Authorize]
         public async Task<ActionResult> Update(Service service) {
             Response response = await this.repo.UpdateServiceAsync(service.ServiceId, service.Name, service.Price, service.TiempoAprox);
-            return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(new { satisfactoryId = response.SatisfactoryId }) : Conflict();
+            return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(response.SatisfactoryId) : Conflict();
         }
 
         // DELETE: /api/services/Delete/{serviceId}
@@ -109,7 +109,7 @@ namespace ApiCutAndGoApp.Controllers {
         [HttpDelete] [Route("[action]/{serviceId}")] [Authorize]
         public async Task<ActionResult> Delete(int serviceId) {
             Response response = await this.repo.DeleteServiceAsync(serviceId);
-            return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(new { satisfactoryId = response.SatisfactoryId }) : Conflict();
+            return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(response.SatisfactoryId) : Conflict();
         }
         #endregion
 

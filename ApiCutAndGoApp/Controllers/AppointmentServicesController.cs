@@ -69,7 +69,7 @@ namespace ApiCutAndGoApp.Controllers {
         [HttpPost] [Route("[action]/{appointmentId}/{serviceId}")] [Authorize]
         public async Task<ActionResult> Create(int appointmentId, int serviceId) { 
             Response response = await this.repo.InsertAppointmentServiceAsync(appointmentId, serviceId);
-            return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(new { satisfactoryId = response.SatisfactoryId }) : Conflict();
+            return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(response.SatisfactoryId) : Conflict();
         }
 
         // DELETE: /api/appointmentservices/delete/{appointmentId}/{serviceId}
@@ -85,7 +85,7 @@ namespace ApiCutAndGoApp.Controllers {
         [HttpDelete] [Route("[action]/{appointmentId}/{serviceId}")] [Authorize]
         public async Task<ActionResult> Delete(int appointmentId, int serviceId) {
             Response response = await this.repo.DeleteAppointmentServiceAsync(appointmentId, serviceId);
-            return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(new { satisfactoryId = response.SatisfactoryId }) : Conflict();
+            return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(response.SatisfactoryId) : Conflict();
         }
         #endregion
 
