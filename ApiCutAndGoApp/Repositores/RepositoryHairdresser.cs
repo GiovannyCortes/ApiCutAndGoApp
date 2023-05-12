@@ -40,11 +40,12 @@ namespace ApiCutAndGoApp.Repositores {
 
         public async Task<bool> UserAssignTokenAsync(int user_id, string token) {
             User? user = await this.FindUserAsync(user_id);
+            int record = 0;
             if (user != null) {
                 user.TempToken = token;
-                return true;
+                record = await this.context.SaveChangesAsync();
             }
-            return false;
+            return (record > 0);
         }
 
         public async Task<bool> UserValidateTokenAsync(int user_id, string token) {

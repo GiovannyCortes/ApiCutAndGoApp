@@ -112,5 +112,6 @@ namespace ApiCutAndGoApp.Controllers {
             return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(new { satisfactoryId = response.SatisfactoryId }) : Conflict();
         }
         #endregion
+
     }
 }
