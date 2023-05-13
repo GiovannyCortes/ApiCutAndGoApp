@@ -16,7 +16,7 @@ namespace ApiCutAndGoApp.Controllers {
             this.repo = repo;
         }
 
-        #region SERVICES
+        #region CRUD ACTIONS
         // GET: /api/services/FindService/{serviceId}
         /// <summary>Obtiene un SERVICIO de la tabla SERVICES, filtrado por su Id.</summary>
         /// <param name="serviceId">ID (GUID) del servicio.</param>
@@ -92,7 +92,7 @@ namespace ApiCutAndGoApp.Controllers {
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [HttpPut] [Route("[action]")] [Authorize]
-        public async Task<ActionResult> Update(Service service) {
+        public async Task<ActionResult> Update(ServiceUpdates service) {
             Response response = await this.repo.UpdateServiceAsync(service.ServiceId, service.Name, service.Price, service.TiempoAprox);
             return (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) ? Ok(response.SatisfactoryId) : Conflict();
         }

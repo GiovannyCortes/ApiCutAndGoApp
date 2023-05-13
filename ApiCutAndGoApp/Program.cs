@@ -3,10 +3,8 @@ using ApiCutAndGoApp.Helpers;
 using ApiCutAndGoApp.Repositores;
 using CutAndGo.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
 using NSwag.Generation.Processors.Security;
 using NSwag;
-using System.Reflection.Metadata;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
 var builder = WebApplication.CreateBuilder(args);
