@@ -500,7 +500,7 @@ namespace ApiCutAndGoApp.Repositores {
                     }
                     this.context.Schedules.Remove(schedule);
                     await this.context.SaveChangesAsync();
-                    return new Response { ResponseCode = (int)ResponseCodes.OK };
+                    return new Response { SatisfactoryId = schedule_id, ResponseCode = (int)ResponseCodes.OK };
                 } else {
                     return new Response {
                         ResponseCode = (int)ResponseCodes.Failed,
