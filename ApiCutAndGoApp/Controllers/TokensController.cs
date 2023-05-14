@@ -40,7 +40,7 @@ namespace ApiCutAndGoApp.Controllers {
         /// <response code="401">Unauthorized. Credenciales incorrectas.</response>  
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [HttpPost] [Route("[action]")] [Authorize]
+        [HttpPost] [Route("[action]/{userId}/{token}")] [Authorize]
         public async Task<ActionResult<bool>> UserAssignTokenAsync(int userId, string token) {
             return Ok(await this.repo.UserAssignTokenAsync(userId, token));
         }
@@ -53,7 +53,7 @@ namespace ApiCutAndGoApp.Controllers {
         /// <response code="401">Unauthorized. Credenciales incorrectas.</response>  
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [HttpGet] [Route("[action]")] [Authorize]
+        [HttpGet] [Route("[action]/{userId}/{token}")]
         public async Task<ActionResult<bool>> UserValidateTokenAsync(int userId, string token) {
             return Ok(await this.repo.UserValidateTokenAsync(userId, token));
         }
@@ -66,7 +66,7 @@ namespace ApiCutAndGoApp.Controllers {
         /// <response code="401">Unauthorized. Credenciales incorrectas.</response>  
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [HttpGet] [Route("[action]")] [Authorize]
+        [HttpGet] [Route("[action]/{hairdresserId}/{token}")]
         public async Task<ActionResult<bool>> HairdresserValidateTokenAsync(int hairdresserId, string token) {
             return Ok(await this.repo.HairdresserValidateTokenAsync(hairdresserId, token));
         }

@@ -123,6 +123,8 @@ namespace ApiCutAndGoApp.Controllers {
 
         // PUT: /api/users/ValidateEmail/{userId}
         /// <summary>Se valida el email de un USUARIO existente.</summary>
+        /// <param name="userId">ID (GUID) del usuario.</param>
+        /// <param name="token">Token temporal del usuario.</param>
         /// <remarks>Propiedades necesarias: UserId</remarks>
         /// <response code="200">OK. Modificación realizada satisfactoriamente.</response>
         /// <response code="401">Unauthorized. Cliente no autorizado.</response>
@@ -132,20 +134,24 @@ namespace ApiCutAndGoApp.Controllers {
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        [HttpPut] [Route("[action]")] [Authorize]
-        public async Task<ActionResult> ValidateEmail(int userId) {
-            Response response = await this.repo.ValidateEmailAsync(userId);
-            if (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) {
-                return Ok(response.SatisfactoryId);
-            } else {
-                if (response.ErrorCode == (int)IRepositoryHairdresser.ResponseErrorCodes.RecordNotFound) {
-                    return NotFound();
+        [HttpPut] [Route("[action]/{userId}/{token}")]
+        public async Task<ActionResult> ValidateEmail(int userId, string token) {
+            bool confirm = await this.repo.UserValidateTokenAsync(userId, token);
+            if (confirm) {
+                Response response = await this.repo.ValidateEmailAsync(userId);
+                if (response.ResponseCode == (int)IRepositoryHairdresser.ResponseCodes.OK) {
+                    return Ok(response.SatisfactoryId);
+                } else {
+                    if (response.ErrorCode == (int)IRepositoryHairdresser.ResponseErrorCodes.RecordNotFound) {
+                        return NotFound();
+                    }
+                    return Conflict(new {
+                        ErrorCode = response.ErrorCode,
+                        ErrorMessage = response.ErrorMessage
+                    });
                 }
-                return Conflict(new {
-                    ErrorCode = response.ErrorCode,
-                    ErrorMessage = response.ErrorMessage
-                });
             }
+            return Unauthorized();
         }
         #endregion
 

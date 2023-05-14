@@ -244,7 +244,7 @@ namespace ApiCutAndGoApp.Repositores {
                 user.EmailConfirmed = true;
                 record = await this.context.SaveChangesAsync();
             }
-            return (record > 0) ? new Response { ResponseCode = (int)ResponseCodes.OK } :
+            return (record > 0) ? new Response { SatisfactoryId = user_id, ResponseCode = (int)ResponseCodes.OK } :
                                   new Response {
                                       ResponseCode = (int)ResponseCodes.Failed,
                                       ErrorCode = (int)ResponseErrorCodes.RecordNotFound,
