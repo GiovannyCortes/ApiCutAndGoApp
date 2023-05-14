@@ -7,6 +7,7 @@ using CutAndGo.Interfaces;
 using static CutAndGo.Interfaces.IRepositoryHairdresser;
 using Newtonsoft.Json;
 using System.Security.Claims;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ApiCutAndGoApp.Repositores {
     public class RepositoryHairdresser : IRepositoryHairdresser {
@@ -169,7 +170,7 @@ namespace ApiCutAndGoApp.Repositores {
                     Phone = phone,
                     Email = email.ToLower(),
                     EmailConfirmed = false,
-                    Image = "user_" + newid + image_extension,
+                    Image = (image_extension == null) ? "" : "user_" + newid + image_extension,
                     TempToken = ""
                 };
 
@@ -187,10 +188,10 @@ namespace ApiCutAndGoApp.Repositores {
                 user.LastName = lastname;
                 user.Phone = phone;
                 user.Email = email.ToLower();
-                user.Image = "user_" + user_id + image_extension;
+                user.Image = (image_extension == null) ? user.Image : "user_" + user_id + image_extension; // Si llega null se mantiene el valor anterior
                 record = await this.context.SaveChangesAsync();
             }
-            return (record > 0) ? new Response { ResponseCode = (int)ResponseCodes.OK } : 
+            return (record > 0) ? new Response { SatisfactoryId = user_id, ResponseCode = (int)ResponseCodes.OK } : 
                                   new Response { 
                                       ResponseCode = (int)ResponseCodes.Failed, 
                                       ErrorCode = (int)ResponseErrorCodes.RecordNotFound, 
@@ -302,7 +303,7 @@ namespace ApiCutAndGoApp.Repositores {
                 Phone = phone,
                 Address = address,
                 PostalCode = postal_code,
-                Image = "hairdresser_" + newid + image_extension,
+                Image = (image_extension == null) ? "" : "hairdresser_" + newid + image_extension,
                 Token = GenerateToken()
             };
             this.context.Hairdressers.Add(hairdresser);
@@ -321,7 +322,7 @@ namespace ApiCutAndGoApp.Repositores {
                 hairdresser.Phone = phone;
                 hairdresser.Address = address;
                 hairdresser.PostalCode = postal_code;
-                hairdresser.Image = "hairdresser_" + hairdresser_id + image_extension;
+                hairdresser.Image = (image_extension == null) ? hairdresser.Image : "hairdresser_" + hairdresser_id + image_extension;
                 record = await this.context.SaveChangesAsync();
             }
             return (record > 0) ? new Response { ResponseCode = (int)ResponseCodes.OK, SatisfactoryId = hairdresser_id } :
