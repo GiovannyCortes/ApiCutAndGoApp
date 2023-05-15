@@ -207,12 +207,22 @@ namespace ApiCutAndGoApp.Repositores {
                                      select hairdresser.HairdresserId;
 
             List<int> hairdresser_ids = await query_Hairdressers.ToListAsync();
-            Response? response = null;
-            foreach (int ids in hairdresser_ids) {
-                await this.DeleteAdminAsync(ids, user_id);
-                response = await this.DeleteHairdresserAsync(ids);
+            List<bool> responses = new List<bool>();
+            foreach (int hairdresser_id in hairdresser_ids) {
+                var admins = await this.context.Admins.Where(admin => admin.HairdresserId == hairdresser_id).ToListAsync();
+                if (admins.Count > 1) {
+                    await this.DeleteAdminAsync(hairdresser_id, user_id);
+                } else {
+                    await this.DeleteAdminAsync(hairdresser_id, user_id);
+                    Response response = await this.DeleteHairdresserAsync(hairdresser_id);
+                    if (response != null && response.ResponseCode == (int)ResponseCodes.OK) {
+                        responses.Add(true);
+                    } else {
+                        responses.Add(false);
+                    }
+                }
             }
-            return (response != null && response.ResponseCode == (int)ResponseCodes.OK);
+            return !responses.Any(b => b == false);
         }
 
         public async Task<Response> DeleteUserAsync(int user_id) {
